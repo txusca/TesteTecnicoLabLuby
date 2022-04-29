@@ -1,5 +1,7 @@
-const Funcionario = require("../models/Funcionario");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const Funcionario = require("../models/Funcionario");
 
 function generateToken(params = {}) {
   return jwt.sign(params, "Rrw$p58BzgC^", {
@@ -17,7 +19,7 @@ module.exports = {
       return res.status(400).json({ error: "Email não encontrado" });
     }
 
-    if (!(senha === funcionario.senha)) {
+    if (!await bcrypt.compare(senha, funcionario.senha)) {
       return res.status(400).json({ error: "Senha incorreta" });
     }
 

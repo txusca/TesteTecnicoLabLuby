@@ -1,4 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
+const bcrypt = require("bcryptjs");
 
 class Funcionario extends Model {
   static init(sequelize) {
@@ -14,7 +15,14 @@ class Funcionario extends Model {
       {
         sequelize,
       }
+      
     );
+    this.addHook('beforeSave', async funcionario => {
+      if (funcionario.senha) {
+        funcionario.senha = await bcrypt.hash(funcionario.senha, 8);
+      }
+    });
+    return this;
   }
 
   static associate(models) {
@@ -23,6 +31,8 @@ class Funcionario extends Model {
       as: "veiculos",
     });
   }
+
+
 }
 
 module.exports = Funcionario;
